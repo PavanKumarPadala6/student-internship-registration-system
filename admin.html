@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Qubitedge Admin — Registrations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#f0f4ff; --card:#fff; --border:#d6dcf5;
+      --accent:#4361ee; --accent2:#7b2ff7;
+      --text:#1a1d3a; --muted:#6b72a8; --light:#eef1ff;
+      --green:#22c55e; --yellow:#f59e0b; --red:#ef4444; --blue:#3b82f6;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+    /* TOP BAR */
+    .topbar{background:linear-gradient(135deg,#1a1d3a,#2d3170);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(26,29,58,.18)}
+    .topbar-brand{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#fff;display:flex;align-items:center;gap:10px}
+    .topbar-brand span{background:linear-gradient(135deg,#4361ee,#7b2ff7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .topbar-sub{font-size:12px;color:rgba(255,255,255,.5);font-weight:400}
+
+    /* WRAPPER */
+    .wrap{max-width:1280px;margin:0 auto;padding:28px 20px 56px}
+
+    /* STAT CARDS */
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px}
+    .stat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 18px;box-shadow:0 2px 10px rgba(67,97,238,.06)}
+    .stat-val{font-family:'Syne',sans-serif;font-weight:800;font-size:2rem;line-height:1;margin-bottom:4px}
+    .stat-lbl{font-size:12px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+    .stat.total   .stat-val{color:var(--accent)}
+    .stat.pending .stat-val{color:var(--yellow)}
+    .stat.approved .stat-val{color:var(--green)}
+    .stat.rejected .stat-val{color:var(--red)}
+    .stat.revenue  .stat-val{color:#7b2ff7;font-size:1.6rem}
+    .stat.today   .stat-val{color:var(--blue)}
+
+    /* TOOLBAR */
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+    .search-box{flex:1;min-width:200px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border .2s}
+    .search-box:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(67,97,238,.1)}
+    .filter-select{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 32px 10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b72a8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+    .refresh-btn{background:linear-gradient(135deg,#4361ee,#7b2ff7);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+    .refresh-btn:hover{opacity:.85}
+
+    /* TABLE CARD */
+    .tcard{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 2px 16px rgba(67,97,238,.07);overflow:hidden}
+    .tcard-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .tcard-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px}
+    .tcard-count{font-size:12px;color:var(--muted)}
+    .t-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{background:var(--light);padding:11px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;border-bottom:1px solid var(--border)}
+    td{padding:13px 14px;border-bottom:1px solid #f0f2fa;vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#fafbff}
+    .name-cell{font-weight:600;color:var(--text)}
+    .ref-cell{font-family:'Syne',sans-serif;font-size:11px;color:var(--muted)}
+    .email-cell{color:var(--accent);font-size:12px}
+    .courses-cell{font-size:11.5px;color:var(--muted);max-width:160px}
+
+    /* STATUS BADGES */
+    .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:.04em;white-space:nowrap}
+    .badge::before{content:'';width:6px;height:6px;border-radius:50%}
+    .badge.Pending  {background:#fef3c7;color:#92400e} .badge.Pending::before{background:#f59e0b}
+    .badge.Approved {background:#dcfce7;color:#166534} .badge.Approved::before{background:#22c55e}
+    .badge.Rejected {background:#fee2e2;color:#991b1b} .badge.Rejected::before{background:#ef4444}
+    .badge.On-Hold  {background:#dbeafe;color:#1e40af} .badge.On-Hold::before{background:#3b82f6}
+
+    /* ACTION BUTTONS */
+    .act-btn{background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;font-weight:500}
+    .act-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(67,97,238,.05)}
+    .act-btn.approve{border-color:#22c55e;color:#16a34a}
+    .act-btn.reject {border-color:#ef4444;color:#dc2626}
+
+    /* PAGINATION */
+    .pagination{display:flex;align-items:center;justify-content:center;gap:8px;padding:18px}
+    .ppage{background:var(--light);border:1.5px solid var(--border);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text)}
+    .ppage:hover,.ppage.active{background:var(--accent);border-color:var(--accent);color:#fff}
+    .ppage:disabled{opacity:.35;cursor:not-allowed}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,22,50,.5);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;padding:16px}
+    .modal-overlay.open{display:flex}
+    .modal{background:#fff;border-radius:22px;padding:32px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 72px rgba(67,97,238,.2);position:relative;animation:mslide .3s cubic-bezier(.22,.68,0,1.15)}
+    @keyframes mslide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+    .modal-close{position:absolute;top:16px;right:18px;background:none;border:none;font-size:20px;color:#b0b8d8;cursor:pointer}
+    .modal-close:hover{color:var(--text)}
+    .modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;margin-bottom:20px}
+    .detail-row{display:flex;gap:8px;padding:9px 0;border-bottom:1px solid #f0f2fa;font-size:13px}
+    .detail-row:last-child{border-bottom:none}
+    .dl{min-width:130px;color:var(--muted);font-weight:500;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding-top:1px}
+    .dv{color:var(--text);font-weight:500;word-break:break-all}
+    .status-select{width:100%;background:var(--light);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;margin-top:16px;cursor:pointer}
+    .status-select:focus{border-color:var(--accent)}
+    .notes-box{width:100%;background:var(--light);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;margin-top:10px;min-height:80px;resize:vertical}
+    .notes-box:focus{border-color:var(--accent)}
+    .save-btn{width:100%;margin-top:14px;padding:12px;border-radius:11px;border:none;background:linear-gradient(135deg,#4361ee,#7b2ff7);color:#fff;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+    .save-btn:hover{opacity:.87}
+
+    /* EMPTY / LOADING */
+    .empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:14px}
+    .loader{text-align:center;padding:40px;color:var(--muted)}
+    .spin{display:inline-block;width:24px;height:24px;border:3px solid rgba(67,97,238,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .toast{position:fixed;bottom:28px;right:28px;background:#1a1d3a;color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:500;z-index:9999;display:none;animation:toastIn .3s ease}
+    @keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    .toast.show{display:block}
+    .toast.success{background:#166534}
+    .toast.error  {background:#991b1b}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <span>Qubitedge</span>
+    <div class="topbar-sub">/ Admin Dashboard</div>
+  </div>
+  <div style="font-size:12px;color:rgba(255,255,255,.4)" id="lastRefreshed"></div>
+</div>
+
+<div class="wrap">
+
+  <!-- STATS -->
+  <div class="stats" id="statsRow">
+    <div class="stat total">   <div class="stat-val" id="s-total">—</div>  <div class="stat-lbl">Total</div></div>
+    <div class="stat pending"> <div class="stat-val" id="s-pending">—</div><div class="stat-lbl">Pending</div></div>
+    <div class="stat approved"><div class="stat-val" id="s-approved">—</div><div class="stat-lbl">Approved</div></div>
+    <div class="stat rejected"><div class="stat-val" id="s-rejected">—</div><div class="stat-lbl">Rejected</div></div>
+    <div class="stat revenue"> <div class="stat-val" id="s-revenue">—</div> <div class="stat-lbl">Revenue (₹)</div></div>
+    <div class="stat today">   <div class="stat-val" id="s-today">—</div>  <div class="stat-lbl">Last 24h</div></div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <input class="search-box" id="searchBox" type="text" placeholder="🔍  Search by name, email, mobile, ref ID…" oninput="debounceSearch()"/>
+    <select class="filter-select" id="statusFilter" onchange="loadData(1)">
+      <option value="All">All Statuses</option>
+      <option value="Pending">Pending</option>
+      <option value="Approved">Approved</option>
+      <option value="Rejected">Rejected</option>
+      <option value="On Hold">On Hold</option>
+    </select>
+    <button class="refresh-btn" onclick="refreshAll()">↻ Refresh</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="tcard">
+    <div class="tcard-head">
+      <div class="tcard-title">Registrations</div>
+      <div class="tcard-count" id="tableCount">Loading…</div>
+    </div>
+    <div class="t-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Ref ID</th>
+            <th>Student</th>
+            <th>Email / Mobile</th>
+            <th>College</th>
+            <th>Courses</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="9" class="loader"><div class="spin"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlay(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title" id="modalTitle">Application Details</div>
+    <div id="modalBody"></div>
+    <div style="margin-top:20px;border-top:1px solid #f0f2fa;padding-top:18px">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Update Status</div>
+      <select class="status-select" id="modalStatus">
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+        <option value="On Hold">On Hold</option>
+      </select>
+      <textarea class="notes-box" id="modalNotes" placeholder="Admin notes (optional)…"></textarea>
+      <button class="save-btn" onclick="saveStatus()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  CONFIG — change this to your API server URL
+// ══════════════════════════════════════════════
+const API = 'http://localhost:3000/api';
+
+let currentPage = 1;
+let currentId   = null;
+let searchTimer = null;
+
+// ── INIT ──────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  refreshAll();
+});
+
+async function refreshAll() {
+  await Promise.all([loadSummary(), loadData(1)]);
+  document.getElementById('lastRefreshed').textContent =
+    'Refreshed: ' + new Date().toLocaleTimeString();
+}
+
+// ── SUMMARY STATS ─────────────────────────────
+async function loadSummary() {
+  try {
+    const res = await fetch(`${API}/admin/summary`);
+    const json = await res.json();
+    if (!json.success) return;
+    const d = json.data;
+    document.getElementById('s-total').textContent   = d.total   || 0;
+    document.getElementById('s-pending').textContent = d.pending || 0;
+    document.getElementById('s-approved').textContent= d.approved|| 0;
+    document.getElementById('s-rejected').textContent= d.rejected|| 0;
+    document.getElementById('s-revenue').textContent = d.total_revenue ? '₹' + Number(d.total_revenue).toLocaleString('en-IN') : '₹0';
+    document.getElementById('s-today').textContent   = d.last_24h || 0;
+  } catch(e) {
+    console.error('Summary error:', e);
+  }
+}
+
+// ── TABLE DATA ────────────────────────────────
+async function loadData(page = 1) {
+  currentPage = page;
+  const search = document.getElementById('searchBox').value.trim();
+  const status = document.getElementById('statusFilter').value;
+  const tbody  = document.getElementById('tableBody');
+  tbody.innerHTML = '<tr><td colspan="9" class="loader"><div class="spin"></div></td></tr>';
+
+  try {
+    const params = new URLSearchParams({ page, limit: 20 });
+    if (status !== 'All') params.set('status', status);
+    if (search) params.set('search', search);
+
+    const res  = await fetch(`${API}/admin/registrations?${params}`);
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message);
+
+    document.getElementById('tableCount').textContent = `${json.total} record${json.total !== 1 ? 's' : ''}`;
+    renderTable(json.data);
+    renderPagination(json.page, json.pages);
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="9" class="empty">⚠ Could not load data. Is the API server running?<br/><small style="color:#b0b8d8">${e.message}</small></td></tr>`;
+    document.getElementById('tableCount').textContent = '—';
+  }
+}
+
+function renderTable(rows) {
+  const tbody = document.getElementById('tableBody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">No registrations found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(r => {
+    const statusKey = r.status.replace(' ', '-');
+    const date = new Date(r.submitted_at).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
+    const courses = (r.courses_selected || []).join(', ');
+    return `<tr>
+      <td><div class="ref-cell">${r.ref_id}</div></td>
+      <td><div class="name-cell">${esc(r.student_name)}</div><div style="font-size:11px;color:var(--muted)">${esc(r.college_name||'')}</div></td>
+      <td><div class="email-cell">${esc(r.email)}</div><div style="font-size:11.5px;color:var(--muted)">${esc(r.mobile)}</div></td>
+      <td style="font-size:12px;max-width:140px;word-break:break-word">${esc(r.college_name)}</td>
+      <td><div class="courses-cell">${esc(courses)}</div></td>
+      <td style="font-weight:600;color:#7b2ff7">₹${Number(r.amount_paid).toLocaleString('en-IN')}</td>
+      <td><span class="badge ${statusKey}">${r.status}</span></td>
+      <td style="font-size:12px;color:var(--muted);white-space:nowrap">${date}</td>
+      <td><button class="act-btn" onclick="openModal(${r.id})">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderPagination(page, pages) {
+  const p = document.getElementById('pagination');
+  if (pages <= 1) { p.innerHTML = ''; return; }
+  let html = `<button class="ppage" onclick="loadData(${page-1})" ${page===1?'disabled':''}>‹</button>`;
+  for (let i = 1; i <= pages; i++) {
+    if (i === 1 || i === pages || Math.abs(i - page) <= 2)
+      html += `<button class="ppage ${i===page?'active':''}" onclick="loadData(${i})">${i}</button>`;
+    else if (Math.abs(i - page) === 3)
+      html += `<span style="color:var(--muted);padding:0 4px">…</span>`;
+  }
+  html += `<button class="ppage" onclick="loadData(${page+1})" ${page===pages?'disabled':''}>›</button>`;
+  p.innerHTML = html;
+}
+
+// ── MODAL ─────────────────────────────────────
+async function openModal(id) {
+  currentId = id;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('modalBody').innerHTML = '<div class="loader"><div class="spin"></div></div>';
+
+  try {
+    const res  = await fetch(`${API}/admin/registrations/${id}`);
+    const json = await res.json();
+    if (!json.success) throw new Error();
+    const d = json.data;
+
+    document.getElementById('modalTitle').textContent = d.student_name + ' — ' + d.ref_id;
+    document.getElementById('modalStatus').value = d.status;
+    document.getElementById('modalNotes').value  = d.admin_notes || '';
+
+    const fmt = (v) => v || '—';
+    document.getElementById('modalBody').innerHTML = `
+      ${row('Ref ID',        d.ref_id)}
+      ${row('Name',          d.student_name)}
+      ${row('Email',         d.email + (d.email_verified ? ' ✔' : ' (unverified)'))}
+      ${row('Mobile',        d.mobile)}
+      ${row('City',          fmt(d.city))}
+      ${row('College',       d.college_name)}
+      ${row('College ID',    fmt(d.college_id))}
+      ${row('Department',    d.department)}
+      ${row('Semester',      fmt(d.semester))}
+      ${row('Domains',       (d.interested_domains||[]).join(', ') || '—')}
+      ${row('Courses',       (d.courses_selected||[]).join(', '))}
+      ${row('Transaction ID',d.transaction_id)}
+      ${row('Amount Paid',   '₹' + Number(d.amount_paid).toLocaleString('en-IN'))}
+      ${row('Payment Date',  new Date(d.payment_date).toLocaleDateString('en-IN'))}
+      ${row('Receipt',       d.receipt_url ? `<a href="${d.receipt_url}" target="_blank" style="color:var(--accent)">View Receipt ↗</a>` : '—')}
+      ${row('Submitted',     new Date(d.submitted_at).toLocaleString('en-IN'))}
+    `;
+  } catch(e) {
+    document.getElementById('modalBody').innerHTML = '<div class="empty">Failed to load details.</div>';
+  }
+}
+
+function row(label, value) {
+  return `<div class="detail-row"><div class="dl">${label}</div><div class="dv">${value}</div></div>`;
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  currentId = null;
+}
+
+function handleOverlay(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+async function saveStatus() {
+  if (!currentId) return;
+  const status = document.getElementById('modalStatus').value;
+  const notes  = document.getElementById('modalNotes').value.trim();
+
+  try {
+    const res  = await fetch(`${API}/admin/registrations/${currentId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, admin_notes: notes }),
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message);
+    showToast('Status updated successfully', 'success');
+    closeModal();
+    refreshAll();
+  } catch(e) {
+    showToast('Failed to update status', 'error');
+  }
+}
+
+// ── SEARCH DEBOUNCE ───────────────────────────
+function debounceSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => loadData(1), 400);
+}
+
+// ── TOAST ─────────────────────────────────────
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── ESCAPE ────────────────────────────────────
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Qubitedge – Summer Internship 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#f0f4ff; --card:#fff; --border:#d6dcf5;
+      --accent:#4361ee; --accent2:#7b2ff7;
+      --text:#1a1d3a; --muted:#6b72a8; --light:#eef1ff;
+      --error:#e63757;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+    body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,#c7d0f8 1px,transparent 1px);background-size:28px 28px;opacity:.4;pointer-events:none;z-index:0}
+
+    .banner{background:linear-gradient(135deg,#4361ee,#7b2ff7);padding:12px 20px;text-align:center;position:relative;z-index:2}
+    .banner p{color:rgba(255,255,255,.92);font-size:13px;font-weight:500}
+    .banner strong{color:#fff}
+
+    .wrapper{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:32px 18px 56px}
+
+    /* HEADER */
+    .hdr{text-align:center;margin-bottom:30px}
+    .logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px}
+    .logo-row img{height:44px;object-fit:contain}
+    .logo-fb{display:none;height:44px;padding:0 16px;background:linear-gradient(135deg,#4361ee,#7b2ff7);border-radius:10px;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:#fff;letter-spacing:.04em}
+    .badge{display:inline-flex;align-items:center;gap:7px;background:rgba(67,97,238,.09);border:1px solid rgba(67,97,238,.22);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--accent);letter-spacing:.07em;text-transform:uppercase;margin-bottom:14px}
+    .bdot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.4s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+    h1{font-family:'Syne',sans-serif;font-size:clamp(1.7rem,4vw,2.5rem);font-weight:800;line-height:1.15;background:linear-gradient(135deg,#1a1d3a 0%,#4361ee 55%,#7b2ff7 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+    .sub{color:var(--muted);font-size:15px;line-height:1.65}
+    .sub strong{color:var(--accent);-webkit-text-fill-color:var(--accent)}
+
+    /* CARD */
+    .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:36px 36px 28px;box-shadow:0 6px 32px rgba(67,97,238,.08);margin-bottom:18px;animation:fu .45s ease}
+    @keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:540px){.card{padding:22px 16px 18px}}
+
+    /* SECTION HEAD */
+    .sh{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+    .si{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#4361ee,#7b2ff7);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .si svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .st{font-family:'Syne',sans-serif;font-size:14.5px;font-weight:700;color:var(--text);white-space:nowrap}
+    .sl{flex:1;height:1px;background:var(--border)}
+
+    /* GRID */
+    .fg{display:grid;gap:16px}
+    .c2{grid-template-columns:1fr 1fr}
+    .c3{grid-template-columns:1fr 1fr 1fr}
+    @media(max-width:600px){.c2,.c3{grid-template-columns:1fr}}
+
+    /* FIELD */
+    .field{display:flex;flex-direction:column;gap:6px}
+    label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+    .req{color:var(--error);margin-left:2px}
+    .hint{text-transform:none;letter-spacing:0;font-weight:400;color:#b0b8d8;margin-left:3px;font-size:10.5px}
+
+    input,select,textarea{background:var(--light);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;width:100%;transition:border .2s,box-shadow .2s,background .2s;appearance:none}
+    input::placeholder,textarea::placeholder{color:#b0b8d8}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(67,97,238,.1);background:#fff}
+    input.err,select.err{border-color:var(--error)!important;background:#fff5f7}
+    select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b72a8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:38px;cursor:pointer}
+    .emsg{font-size:11px;color:var(--error);display:none;margin-top:1px}
+    .emsg.show{display:block}
+
+    /* SEARCHABLE COLLEGE DROPDOWN */
+    .ss-wrap{position:relative}
+    .ss-input{width:100%;background:var(--light);border:1.5px solid var(--border);border-radius:10px;padding:11px 38px 11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border .2s,box-shadow .2s}
+    .ss-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(67,97,238,.1);background:#fff}
+    .ss-input.err{border-color:var(--error)!important;background:#fff5f7}
+    .ss-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted);font-size:12px}
+    .ss-dd{display:none;position:absolute;top:calc(100% + 5px);left:0;right:0;background:#fff;border:1.5px solid var(--border);border-radius:12px;max-height:220px;overflow-y:auto;z-index:9999;box-shadow:0 8px 28px rgba(67,97,238,.13)}
+    .ss-dd.open{display:block}
+    .ss-item{padding:10px 14px;font-size:13px;color:var(--text);cursor:pointer;border-bottom:1px solid #f0f2fa;transition:background .12s}
+    .ss-item:last-child{border-bottom:none}
+    .ss-item:hover{background:rgba(67,97,238,.07);color:var(--accent)}
+    .ss-item .dist{font-size:10.5px;color:var(--muted);margin-top:1px}
+    .ss-none{padding:14px;font-size:13px;color:var(--muted);text-align:center}
+    .ss-dd::-webkit-scrollbar{width:5px}
+    .ss-dd::-webkit-scrollbar-track{background:#f0f4ff;border-radius:8px}
+    .ss-dd::-webkit-scrollbar-thumb{background:#c7d0f8;border-radius:8px}
+
+    /* DOMAIN TAGS */
+    .tags{display:flex;flex-wrap:wrap;gap:7px}
+    .tag{padding:7px 14px;border-radius:100px;border:1.5px solid var(--border);background:var(--light);font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;user-select:none}
+    .tag:hover{border-color:var(--accent);color:var(--accent);background:rgba(67,97,238,.05)}
+    .tag.on{background:rgba(67,97,238,.1);border-color:var(--accent);color:var(--accent);font-weight:600}
+
+    /* COURSE CARDS */
+    .cc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media(max-width:500px){.cc-grid{grid-template-columns:1fr}}
+    .cc{border:1.5px solid var(--border);border-radius:13px;padding:16px;background:var(--light);cursor:pointer;transition:all .2s;user-select:none;display:flex;align-items:flex-start;gap:12px}
+    .cc:hover{border-color:var(--accent);background:rgba(67,97,238,.04)}
+    .cc.on{border-color:var(--accent);background:rgba(67,97,238,.07)}
+    .cc input[type=checkbox]{display:none}
+    .cbox{width:21px;height:21px;border-radius:5px;flex-shrink:0;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+    .cbox svg{width:11px;height:11px;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;fill:none;opacity:0;transform:scale(.4);transition:all .2s}
+    .cc.on .cbox{background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px rgba(67,97,238,.3)}
+    .cc.on .cbox svg{opacity:1;transform:scale(1)}
+    .cn{font-size:14px;font-weight:600;color:var(--text)}
+    .cd{font-size:12px;color:var(--muted);line-height:1.5;margin-top:3px}
+
+    /* QR */
+    .qr-box{display:flex;gap:24px;align-items:flex-start;background:var(--light);border:1.5px solid var(--border);border-radius:14px;padding:22px;margin-bottom:18px}
+    @media(max-width:540px){.qr-box{flex-direction:column;align-items:center;text-align:center}}
+    .qr-img{width:132px;height:132px;flex-shrink:0;background:#fff;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;padding:8px}
+    .qr-img svg{width:100%;height:100%}
+    .qt{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--text);margin-bottom:4px}
+    .qamt{font-family:'Syne',sans-serif;font-weight:800;font-size:1.9rem;color:var(--accent);margin-bottom:3px;line-height:1}
+    .qupi{font-size:13px;color:var(--muted);margin-bottom:10px}
+    .qsteps{display:flex;flex-direction:column;gap:4px}
+    .qs{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+    .qs::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
+
+    /* UPLOAD */
+    .upzone{border:2px dashed var(--border);border-radius:12px;padding:24px 18px;text-align:center;cursor:pointer;transition:all .3s;background:var(--light);position:relative}
+    .upzone:hover{border-color:var(--accent);background:rgba(67,97,238,.03)}
+    .upzone.has-file{border-color:var(--accent);border-style:solid;background:rgba(67,97,238,.04)}
+    .upzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;padding:0;border:none}
+    .upico{width:40px;height:40px;border-radius:50%;background:rgba(67,97,238,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
+    .upico svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round}
+    .uptxt{font-size:13px;color:var(--muted)}
+    .uptxt strong{color:var(--accent)}
+    .fname{display:none;margin-top:7px;font-size:13px;color:var(--accent);font-weight:600}
+    .fname.show{display:block}
+
+    /* INFO */
+    .ibox{background:rgba(67,97,238,.06);border:1.5px solid rgba(67,97,238,.17);border-radius:11px;padding:12px 14px;font-size:13px;color:#4a5bbf;display:flex;gap:9px;align-items:flex-start;margin-top:18px}
+    .ibox svg{flex-shrink:0;width:15px;height:15px;stroke:#4361ee;fill:none;stroke-width:2;margin-top:1px}
+
+    /* SUBMIT */
+    .sbtn-row{margin-top:28px;text-align:center}
+    .sbtn{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding:14px 48px;border-radius:12px;border:none;background:linear-gradient(135deg,#4361ee,#7b2ff7);color:#fff;cursor:pointer;box-shadow:0 6px 22px rgba(67,97,238,.28);transition:all .25s;letter-spacing:.03em;display:inline-flex;align-items:center;gap:8px}
+    .sbtn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(67,97,238,.4)}
+
+    /* SUCCESS */
+    .success{display:none;text-align:center;padding:24px 0}
+    .success.show{display:block;animation:fu .5s ease}
+    .sico{width:72px;height:72px;border-radius:50%;background:rgba(67,97,238,.1);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:pop .5s cubic-bezier(.175,.885,.32,1.275)}
+    @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+    .sico svg{width:32px;height:32px;stroke:var(--accent);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+    .stitle{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;color:var(--text);margin-bottom:9px}
+    .sdesc{color:var(--muted);font-size:14.5px;line-height:1.7;max-width:400px;margin:0 auto 22px}
+    .sdesc strong{color:var(--accent)}
+    .sref{display:inline-block;background:rgba(67,97,238,.08);border:1.5px solid rgba(67,97,238,.24);border-radius:11px;padding:10px 26px;font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);font-size:1rem;letter-spacing:.08em}
+
+    /* FOOTER */
+    .foot{text-align:center;margin-top:24px;font-size:12px;color:var(--muted)}
+    .foot a{color:var(--accent);text-decoration:none}
+
+    /* ── EMAIL VERIFY BUTTON ── */
+    .email-row{display:flex;gap:8px;align-items:flex-start}
+    .email-row input{flex:1}
+    .vbtn{flex-shrink:0;height:44px;padding:0 16px;border-radius:10px;border:none;background:linear-gradient(135deg,#4361ee,#7b2ff7);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:5px;margin-top:0}
+    .vbtn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(67,97,238,.35)}
+    .vbtn:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+    .vbtn.verified{background:linear-gradient(135deg,#22c55e,#16a34a);pointer-events:none}
+    .verified-badge{display:none;margin-top:5px;font-size:11.5px;color:#16a34a;font-weight:600;align-items:center;gap:4px}
+    .verified-badge.show{display:flex}
+
+    /* ── OTP MODAL ── */
+    .otp-overlay{display:none;position:fixed;inset:0;background:rgba(20,22,50,.55);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:16px}
+    .otp-overlay.open{display:flex;animation:fadeIn .2s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .otp-modal{background:#fff;border-radius:22px;padding:38px 36px 32px;width:100%;max-width:420px;box-shadow:0 24px 72px rgba(67,97,238,.22);position:relative;animation:slideUp .3s cubic-bezier(.22,.68,0,1.15)}
+    @keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+    @media(max-width:480px){.otp-modal{padding:28px 20px 24px}}
+    .otp-close{position:absolute;top:16px;right:18px;background:none;border:none;font-size:20px;color:#b0b8d8;cursor:pointer;line-height:1;transition:color .2s}
+    .otp-close:hover{color:var(--text)}
+    .otp-icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#4361ee,#7b2ff7);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:22px}
+    .otp-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;color:var(--text);margin-bottom:6px}
+    .otp-sub{font-size:13.5px;color:var(--muted);line-height:1.6;margin-bottom:26px}
+    .otp-sub strong{color:var(--accent)}
+    .otp-digits{display:flex;gap:9px;justify-content:center;margin-bottom:20px}
+    .otp-digits input{width:50px;height:56px;border-radius:10px;border:1.8px solid var(--border);background:var(--light);font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);text-align:center;outline:none;transition:border .2s,box-shadow .2s,transform .12s;caret-color:var(--accent)}
+    .otp-digits input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(67,97,238,.12);transform:translateY(-2px);background:#fff}
+    .otp-digits input.filled{border-color:rgba(67,97,238,.4);background:rgba(67,97,238,.04)}
+    .otp-digits input.otp-err{border-color:var(--error);box-shadow:0 0 0 3px rgba(230,55,87,.1)}
+    @keyframes otpShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+    .otp-digits.shake{animation:otpShake .42s ease}
+    .otp-errmsg{font-size:12px;color:var(--error);text-align:center;min-height:16px;margin-bottom:14px}
+    .otp-vbtn{width:100%;padding:13px;border-radius:11px;border:none;background:linear-gradient(135deg,#4361ee,#7b2ff7);color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .otp-vbtn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 24px rgba(67,97,238,.32)}
+    .otp-vbtn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .otp-resend{text-align:center;margin-top:16px;font-size:13px;color:var(--muted)}
+    .otp-resend button{background:none;border:none;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;padding:0}
+    .otp-resend button:disabled{color:#b0b8d8;cursor:not-allowed}
+    .otp-spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── OTP SUCCESS STATE ── */
+    .otp-success{display:none;text-align:center;padding:8px 0}
+    .otp-success.show{display:block}
+    .otp-s-ring{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;animation:pop .45s cubic-bezier(.175,.885,.32,1.275)}
+  </style>
+</head>
+<body>
+
+<div class="banner">
+  <p>☀️ <strong>Qubitedge Summer Internship 2026</strong> — Applications Open · Limited Seats Available!</p>
+</div>
+
+<div class="wrapper">
+
+  <div class="hdr">
+    <div class="logo-row">
+      <img src="https://qubitedge.in/wp-content/uploads/2025/07/logo-shorter.png" alt="Qubitedge"
+        onerror="this.style.display='none';document.getElementById('lfb').style.display='flex';"/>
+      <div class="logo-fb" id="lfb">Qubitedge</div>
+    </div>
+    <div class="badge"><span class="bdot"></span> Summer Internship 2026 — Applications Open</div>
+    <h1>Internship Offer Registration</h1>
+    <p class="sub">Apply for the <strong>Qubitedge Summer Internship 2026</strong> by filling all details below.<br/>Our team will review and get back to you within 3–5 business days.</p>
+  </div>
+
+  <!-- ═══ CARD 1: PERSONAL ═══ -->
+  <div class="card">
+    <div class="sh">
+      <div class="si"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div class="st">Personal Information</div><div class="sl"></div>
+    </div>
+    <div class="fg c2">
+      <div class="field">
+        <label>Full Name <span class="req">*</span></label>
+        <input type="text" id="studentName" placeholder="e.g. Arjun Sharma"/>
+        <div class="emsg" id="e-studentName">Please enter your full name.</div>
+      </div>
+      <div class="field">
+        <label>Mobile Number <span class="req">*</span></label>
+        <input type="tel" id="mobile" placeholder="10-digit number" maxlength="10"/>
+        <div class="emsg" id="e-mobile">Enter a valid 10-digit number.</div>
+      </div>
+    </div>
+    <div class="fg c2" style="margin-top:16px">
+      <div class="field">
+        <label>Email Address <span class="req">*</span></label>
+        <div class="email-row">
+          <input type="email" id="email" placeholder="you@email.com" oninput="onEmailInput()"/>
+          <button class="vbtn" id="verifyEmailBtn" onclick="openOtpModal()" type="button">
+            ✉ Verify
+          </button>
+        </div>
+        <div class="verified-badge" id="verifiedBadge">✔ Email verified</div>
+        <div class="emsg" id="e-email">Enter a valid email address.</div>
+      </div>
+      <div class="field">
+        <label>City</label>
+        <input type="text" id="city" placeholder="e.g. Visakhapatnam"/>
+        <div class="emsg" id="e-city">Please enter your city.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CARD 2: ACADEMIC ═══ -->
+  <div class="card">
+    <div class="sh">
+      <div class="si"><svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+      <div class="st">Academic Details</div><div class="sl"></div>
+    </div>
+
+    <!-- SEARCHABLE COLLEGE DROPDOWN -->
+    <div class="field" style="margin-bottom:16px">
+      <label>College Name <span class="req">*</span></label>
+      <div class="ss-wrap">
+        <input type="text" class="ss-input" id="collegeSearch"
+          placeholder="🔍  Search your college in Andhra Pradesh..."
+          autocomplete="off" oninput="filterColleges(this.value)"
+          onfocus="openDD()" onblur="setTimeout(closeDD,200)"/>
+        <span class="ss-arrow">▾</span>
+        <div class="ss-dd" id="collegeDD"></div>
+      </div>
+      <input type="hidden" id="collegeName"/>
+      <div class="emsg" id="e-collegeName">Please select your college from the list.</div>
+    </div>
+
+    <div class="fg c2">
+      <div class="field">
+        <label>College ID / Roll No.</label>
+        <input type="text" id="collegeId" placeholder="e.g. 21BCE1234"/>
+        <div class="emsg" id="e-collegeId">Please enter your College ID.</div>
+      </div>
+      <div class="field">
+        <label>Department / Branch <span class="req">*</span></label>
+        <select id="department">
+          <option value="">Select Department</option>
+          <option>Computer Science Engineering (CSE)</option>
+          <option>Information Technology (IT)</option>
+          <option>Electronics &amp; Communication (ECE)</option>
+          <option>Electrical Engineering (EEE)</option>
+          <option>Mechanical Engineering</option>
+          <option>Civil Engineering</option>
+          <option>Data Science &amp; AI</option>
+          <option>Artificial Intelligence &amp; ML</option>
+          <option>Business Administration (BBA/MBA)</option>
+          <option>Other</option>
+        </select>
+        <div class="emsg" id="e-department">Please select your department.</div>
+      </div>
+    </div>
+    <div class="fg" style="margin-top:16px">
+      <div class="field">
+        <label>Current Semester</label>
+        <select id="semester">
+          <option value="">Select Semester</option>
+          <option>1st Semester</option><option>2nd Semester</option>
+          <option>3rd Semester</option><option>4th Semester</option>
+          <option>5th Semester</option><option>6th Semester</option>
+          <option>7th Semester</option><option>8th Semester</option>
+        </select>
+        <div class="emsg" id="e-semester">Please select your semester.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CARD 3: PREFERENCES ═══ -->
+  <div class="card">
+    <div class="sh">
+      <div class="si"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+      <div class="st">Internship Preferences</div><div class="sl"></div>
+    </div>
+
+    <div class="field" style="margin-bottom:20px">
+      <label>Interested Domain <span class="hint">(pick up to 2)</span></label>
+      <div class="tags" id="domainTags">
+        <div class="tag" onclick="selDom(this,'Web Development')">Web Development</div>
+        <div class="tag" onclick="selDom(this,'App Development')">App Development</div>
+        <div class="tag" onclick="selDom(this,'Data Science')">Data Science</div>
+        <div class="tag" onclick="selDom(this,'Machine Learning')">Machine Learning</div>
+        <div class="tag" onclick="selDom(this,'Cybersecurity')">Cybersecurity</div>
+        <div class="tag" onclick="selDom(this,'Cloud Computing')">Cloud Computing</div>
+        <div class="tag" onclick="selDom(this,'UI/UX Design')">UI/UX Design</div>
+        <div class="tag" onclick="selDom(this,'DevOps')">DevOps</div>
+        <div class="tag" onclick="selDom(this,'Embedded Systems')">Embedded Systems</div>
+        <div class="tag" onclick="selDom(this,'Blockchain')">Blockchain</div>
+      </div>
+      <input type="hidden" id="interestedDomain"/>
+      <div class="emsg" id="e-interestedDomain">Please select at least one domain.</div>
+    </div>
+
+    <div class="field">
+      <label>Select Course <span class="req">*</span></label>
+      <div class="cc-grid">
+        <label class="cc" onclick="togCC(this)">
+          <input type="checkbox" value="4 Weeks Internship"/>
+          <div class="cbox"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9.5 10.5,2.5"/></svg></div>
+          <div><div class="cn">4 Weeks Internship</div><div class="cd">Hands-on industry project with mentorship, live experience &amp; certificate.</div></div>
+        </label>
+        <label class="cc" onclick="togCC(this)">
+          <input type="checkbox" value="AI Foundation Webinar"/>
+          <div class="cbox"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9.5 10.5,2.5"/></svg></div>
+          <div><div class="cn">AI Foundation Webinar</div><div class="cd">2-hour live session on AI &amp; ML fundamentals with real-world use cases.</div></div>
+        </label>
+      </div>
+      <div class="emsg" id="e-courses">Please select at least one course.</div>
+    </div>
+  </div>
+
+  <!-- ═══ CARD 4: PAYMENT ═══ -->
+  <div class="card">
+    <div class="sh">
+      <div class="si"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+      <div class="st">Payment Details</div><div class="sl"></div>
+    </div>
+
+    <div class="qr-box">
+      <div class="qr-img">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="100" fill="white"/>
+          <rect x="5" y="5" width="25" height="25" fill="#1a1d3a"/><rect x="9" y="9" width="17" height="17" fill="white"/><rect x="13" y="13" width="9" height="9" fill="#1a1d3a"/>
+          <rect x="70" y="5" width="25" height="25" fill="#1a1d3a"/><rect x="74" y="9" width="17" height="17" fill="white"/><rect x="78" y="13" width="9" height="9" fill="#1a1d3a"/>
+          <rect x="5" y="70" width="25" height="25" fill="#1a1d3a"/><rect x="9" y="74" width="17" height="17" fill="white"/><rect x="13" y="78" width="9" height="9" fill="#1a1d3a"/>
+          <rect x="37" y="5" width="4" height="4" fill="#4361ee"/><rect x="45" y="5" width="4" height="4" fill="#4361ee"/><rect x="37" y="13" width="8" height="4" fill="#4361ee"/>
+          <rect x="50" y="13" width="4" height="4" fill="#4361ee"/><rect x="37" y="21" width="4" height="4" fill="#4361ee"/><rect x="45" y="21" width="8" height="4" fill="#4361ee"/>
+          <rect x="5" y="37" width="4" height="8" fill="#4361ee"/><rect x="13" y="37" width="8" height="4" fill="#4361ee"/>
+          <rect x="25" y="37" width="4" height="8" fill="#4361ee"/><rect x="37" y="37" width="8" height="4" fill="#4361ee"/>
+          <rect x="50" y="37" width="4" height="8" fill="#4361ee"/><rect x="58" y="37" width="8" height="4" fill="#4361ee"/>
+          <rect x="70" y="37" width="4" height="4" fill="#4361ee"/><rect x="78" y="37" width="8" height="8" fill="#4361ee"/>
+          <rect x="5" y="45" width="8" height="4" fill="#4361ee"/><rect x="45" y="45" width="8" height="8" fill="#4361ee"/>
+          <rect x="37" y="70" width="4" height="4" fill="#7b2ff7"/><rect x="45" y="70" width="8" height="8" fill="#7b2ff7"/>
+          <rect x="58" y="70" width="4" height="4" fill="#7b2ff7"/><rect x="66" y="66" width="8" height="4" fill="#7b2ff7"/>
+          <rect x="78" y="70" width="8" height="4" fill="#7b2ff7"/><rect x="37" y="78" width="8" height="4" fill="#7b2ff7"/>
+          <rect x="58" y="78" width="8" height="8" fill="#7b2ff7"/><rect x="70" y="78" width="4" height="4" fill="#7b2ff7"/>
+        </svg>
+      </div>
+      <div>
+        <div class="qt">Scan &amp; Pay via UPI</div>
+        <div class="qamt">₹ 499</div>
+        <div class="qupi">UPI ID: <strong>internship@ybl</strong></div>
+        <div class="qsteps">
+          <div class="qs">Open any UPI app (GPay, PhonePe, Paytm)</div>
+          <div class="qs">Scan QR or enter UPI ID above</div>
+          <div class="qs">Pay ₹499 &amp; save receipt screenshot</div>
+          <div class="qs">Enter Transaction ID &amp; upload receipt below</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fg c3">
+      <div class="field">
+        <label>Transaction / UTR ID <span class="req">*</span></label>
+        <input type="text" id="transactionId" placeholder="e.g. 407812345678"/>
+        <div class="emsg" id="e-transactionId">Please enter the Transaction ID.</div>
+      </div>
+      <div class="field">
+        <label>Amount Paid (₹) <span class="req">*</span></label>
+        <input type="number" id="amountPaid" placeholder="499"/>
+        <div class="emsg" id="e-amountPaid">Please enter the amount paid.</div>
+      </div>
+      <div class="field">
+        <label>Payment Date <span class="req">*</span></label>
+        <input type="date" id="paymentDate"/>
+        <div class="emsg" id="e-paymentDate">Please select the payment date.</div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:16px">
+      <label>Upload Payment Receipt <span class="req">*</span></label>
+      <div class="upzone" id="upZone">
+        <input type="file" id="receiptFile" accept="image/*,.pdf" onchange="handleFile(this)"/>
+        <div class="upico"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <div class="uptxt"><strong>Click to upload</strong> or drag &amp; drop<br/>PNG, JPG, PDF — max 5MB</div>
+        <div class="fname" id="fname"></div>
+      </div>
+      <div class="emsg" id="e-receipt">Please upload your payment receipt.</div>
+    </div>
+
+    <div class="ibox">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      By submitting, you confirm all details are accurate. Qubitedge will review your application and reach out within 3–5 business days.
+    </div>
+
+    <div class="sbtn-row">
+      <button class="sbtn" onclick="doSubmit()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Submit Application
+      </button>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success" id="successBox">
+      <div class="sico"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="stitle">Application Submitted! 🎉</div>
+      <p class="sdesc">Your application for the <strong>Qubitedge Summer Internship 2026</strong> has been received. We'll reach out within <strong>3–5 business days</strong> via email.</p>
+      <div class="sref" id="refId">REF: QLT-2026-XXXX</div>
+      <p style="color:var(--muted);font-size:12px;margin-top:16px">Keep this reference ID for your records.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    &copy; 2026 Qubitedge Global Services (OPC) Pvt. Ltd. &nbsp;·&nbsp;
+    <a href="https://qubitedge.in" target="_blank">qubitedge.in</a> &nbsp;·&nbsp;
+    +91 6302829618
+  </div>
+</div>
+
+<!-- ═══ OTP MODAL ═══ -->
+<div class="otp-overlay" id="otpOverlay" onclick="handleOverlayClick(event)">
+  <div class="otp-modal" id="otpModal">
+    <button class="otp-close" onclick="closeOtpModal()" type="button">✕</button>
+
+    <!-- SEND STATE -->
+    <div id="otpSendState">
+      <div class="otp-icon">✉️</div>
+      <div class="otp-title">Verify your email</div>
+      <div class="otp-sub" id="otpSendSub">We'll send a 6-digit code to <strong id="otpEmailDisplay"></strong></div>
+      <button class="otp-vbtn" id="otpSendBtn" onclick="sendOTP()" type="button">Send OTP</button>
+    </div>
+
+    <!-- ENTER OTP STATE -->
+    <div id="otpEnterState" style="display:none">
+      <div class="otp-icon">🔐</div>
+      <div class="otp-title">Enter the code</div>
+      <div class="otp-sub">Sent a 6-digit code to <strong id="otpEmailDisplay2"></strong></div>
+      <div class="otp-digits" id="otpDigits">
+        <input type="text" inputmode="numeric" maxlength="1" id="d0" oninput="otpInput(0)" onkeydown="otpKey(event,0)" onpaste="otpPaste(event)"/>
+        <input type="text" inputmode="numeric" maxlength="1" id="d1" oninput="otpInput(1)" onkeydown="otpKey(event,1)"/>
+        <input type="text" inputmode="numeric" maxlength="1" id="d2" oninput="otpInput(2)" onkeydown="otpKey(event,2)"/>
+        <input type="text" inputmode="numeric" maxlength="1" id="d3" oninput="otpInput(3)" onkeydown="otpKey(event,3)"/>
+        <input type="text" inputmode="numeric" maxlength="1" id="d4" oninput="otpInput(4)" onkeydown="otpKey(event,4)"/>
+        <input type="text" inputmode="numeric" maxlength="1" id="d5" oninput="otpInput(5)" onkeydown="otpKey(event,5)"/>
+      </div>
+      <div class="otp-errmsg" id="otpErrMsg"></div>
+      <button class="otp-vbtn" id="otpVerifyBtn" onclick="verifyOTP()" type="button" disabled>Verify &amp; Continue</button>
+      <div class="otp-resend">
+        Didn't receive it?
+        <button id="otpResendBtn" onclick="resendOTP()" type="button" disabled>Resend (<span id="otpCountdown">30</span>s)</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div id="otpSuccessState" class="otp-success">
+      <div class="otp-s-ring">✓</div>
+      <div class="otp-title">Email Verified!</div>
+      <div class="otp-sub"><strong id="otpEmailDisplay3"></strong> has been verified successfully.</div>
+      <button class="otp-vbtn" onclick="closeOtpModal()" type="button">Continue</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// ════════════════════════════════════════════════
+//  EMAIL OTP VERIFICATION
+// ════════════════════════════════════════════════
+let emailVerified = false;
+let otpCountdownTimer = null;
+const OTP_LEN = 6;
+
+function onEmailInput() {
+  if (emailVerified) {
+    emailVerified = false;
+    document.getElementById('verifyEmailBtn').className = 'vbtn';
+    document.getElementById('verifyEmailBtn').innerHTML = '✉ Verify';
+    document.getElementById('verifiedBadge').classList.remove('show');
+  }
+}
+
+function openOtpModal() {
+  const email = document.getElementById('email').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showE('email', 'Please enter a valid email before verifying.');
+    return;
+  }
+  hideE('email');
+  document.getElementById('otpEmailDisplay').textContent  = email;
+  document.getElementById('otpEmailDisplay2').textContent = email;
+  document.getElementById('otpEmailDisplay3').textContent = email;
+
+  // reset states
+  showOtpState('send');
+  clearOtpDigits();
+  document.getElementById('otpErrMsg').textContent = '';
+
+  document.getElementById('otpOverlay').classList.add('open');
+}
+
+function closeOtpModal() {
+  document.getElementById('otpOverlay').classList.remove('open');
+  clearInterval(otpCountdownTimer);
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('otpOverlay')) closeOtpModal();
+}
+
+function showOtpState(state) {
+  document.getElementById('otpSendState').style.display    = state === 'send'    ? '' : 'none';
+  document.getElementById('otpEnterState').style.display   = state === 'enter'   ? '' : 'none';
+  document.getElementById('otpSuccessState').style.display = state === 'success' ? '' : 'none';
+  if (state === 'success') document.getElementById('otpSuccessState').classList.add('show');
+}
+
+async function sendOTP() {
+  const email = document.getElementById('email').value.trim();
+  const btn = document.getElementById('otpSendBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="otp-spinner"></span> Sending…';
+
+  try {
+    const res  = await fetch('http://localhost:3000/api/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message);
+
+    showOtpState('enter');
+    startCountdown();
+    setTimeout(() => document.getElementById('d0').focus(), 80);
+  } catch(err) {
+    document.getElementById('otpSendBtn').innerHTML = 'Send OTP';
+    btn.disabled = false;
+    alert('⚠ ' + (err.message || 'Failed to send OTP. Try again.'));
+  }
+}
+
+async function resendOTP() {
+  clearOtpDigits();
+  document.getElementById('otpErrMsg').textContent = '';
+  const btn = document.getElementById('otpResendBtn');
+  btn.disabled = true;
+
+  const email = document.getElementById('email').value.trim();
+  try {
+    const res  = await fetch('http://localhost:3000/api/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message);
+    startCountdown();
+    setTimeout(() => document.getElementById('d0').focus(), 80);
+  } catch(err) {
+    btn.disabled = false;
+    btn.innerHTML = 'Resend code';
+    alert('⚠ ' + (err.message || 'Failed to resend OTP.'));
+  }
+}
+
+function startCountdown() {
+  let secs = 30;
+  document.getElementById('otpCountdown').textContent = secs;
+  document.getElementById('otpResendBtn').disabled = true;
+  clearInterval(otpCountdownTimer);
+  otpCountdownTimer = setInterval(() => {
+    secs--;
+    document.getElementById('otpCountdown').textContent = secs;
+    if (secs <= 0) {
+      clearInterval(otpCountdownTimer);
+      const rb = document.getElementById('otpResendBtn');
+      rb.disabled = false;
+      rb.innerHTML = 'Resend code';
+    }
+  }, 1000);
+}
+
+function getOtpValue() {
+  return Array.from({length: OTP_LEN}, (_,i) => (document.getElementById('d'+i)?.value||'')).join('');
+}
+
+function clearOtpDigits() {
+  for (let i = 0; i < OTP_LEN; i++) {
+    const el = document.getElementById('d'+i);
+    if (el) { el.value = ''; el.classList.remove('filled','otp-err'); }
+  }
+  document.getElementById('otpVerifyBtn').disabled = true;
+}
+
+function otpInput(idx) {
+  const el = document.getElementById('d'+idx);
+  el.value = el.value.replace(/\D/g,'').slice(-1);
+  el.classList.toggle('filled', !!el.value);
+  document.getElementById('otpErrMsg').textContent = '';
+  for (let i = 0; i < OTP_LEN; i++) document.getElementById('d'+i).classList.remove('otp-err');
+
+  if (el.value && idx < OTP_LEN - 1) document.getElementById('d'+(idx+1)).focus();
+  document.getElementById('otpVerifyBtn').disabled = getOtpValue().length < OTP_LEN;
+}
+
+function otpKey(e, idx) {
+  if (e.key === 'Backspace' && !document.getElementById('d'+idx).value && idx > 0)
+    document.getElementById('d'+(idx-1)).focus();
+  if (e.key === 'Enter' && getOtpValue().length === OTP_LEN) verifyOTP();
+}
+
+function otpPaste(e) {
+  const text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0, OTP_LEN);
+  if (!text) return;
+  e.preventDefault();
+  for (let i = 0; i < OTP_LEN; i++) {
+    const el = document.getElementById('d'+i);
+    el.value = text[i] || '';
+    el.classList.toggle('filled', !!el.value);
+  }
+  document.getElementById('d'+ Math.min(text.length, OTP_LEN-1)).focus();
+  document.getElementById('otpVerifyBtn').disabled = getOtpValue().length < OTP_LEN;
+}
+
+async function verifyOTP() {
+  const code  = getOtpValue();
+  const email = document.getElementById('email').value.trim();
+  const btn   = document.getElementById('otpVerifyBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="otp-spinner"></span> Verifying…';
+
+  try {
+    const res  = await fetch('http://localhost:3000/api/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp: code }),
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      clearInterval(otpCountdownTimer);
+      showOtpState('success');
+      emailVerified = true;
+      document.getElementById('verifyEmailBtn').className = 'vbtn verified';
+      document.getElementById('verifyEmailBtn').innerHTML = '✔ Verified';
+      document.getElementById('verifiedBadge').classList.add('show');
+      setTimeout(closeOtpModal, 1800);
+    } else {
+      throw new Error(json.message);
+    }
+  } catch(err) {
+    document.getElementById('otpErrMsg').textContent = err.message || 'Incorrect OTP. Please try again.';
+    for (let i = 0; i < OTP_LEN; i++) document.getElementById('d'+i).classList.add('otp-err');
+    const digs = document.getElementById('otpDigits');
+    digs.classList.add('shake');
+    setTimeout(() => digs.classList.remove('shake'), 450);
+    clearOtpDigits();
+    btn.disabled = false;
+    btn.innerHTML = 'Verify &amp; Continue';
+    setTimeout(() => document.getElementById('d0').focus(), 50);
+  }
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ════════════════════════════════════════════════
+//  ANDHRA PRADESH ENGINEERING COLLEGES DATABASE
+// ════════════════════════════════════════════════
+const AP_COLLEGES = [
+  // ── VISAKHAPATNAM ──
+  {n:"Andhra University College of Engineering",d:"Visakhapatnam"},
+  {n:"GITAM (Deemed to be University) – Visakhapatnam",d:"Visakhapatnam"},
+  {n:"MVGR College of Engineering (Autonomous)",d:"Vizianagaram"},
+  {n:"Raghu Engineering College",d:"Visakhapatnam"},
+  {n:"Vignan's Institute of Information Technology",d:"Visakhapatnam"},
+  {n:"Gayatri Vidya Parishad College of Engineering (Autonomous)",d:"Visakhapatnam"},
+  {n:"Anil Neerukonda Institute of Technology & Sciences (ANITS)",d:"Visakhapatnam"},
+  {n:"Shri Vishnu Engineering College for Women",d:"Bhimavaram"},
+  {n:"Sir C R Reddy College of Engineering",d:"Eluru"},
+  {n:"Dadi Institute of Engineering & Technology",d:"Visakhapatnam"},
+  {n:"Srinivasa Institute of Engineering & Technology",d:"Visakhapatnam"},
+  {n:"Bonam Venkata Chalamayya Institute of Technology & Science",d:"Visakhapatnam"},
+  {n:"GMR Institute of Technology",d:"Srikakulam"},
+  {n:"GIET Engineering College",d:"Srikakulam"},
+  {n:"Swarnandhra College of Engineering & Technology",d:"West Godavari"},
+  {n:"Vignan's Engineering College",d:"Guntur"},
+  {n:"Intell Engineering College",d:"Visakhapatnam"},
+  {n:"Avanthi Institute of Engineering & Technology",d:"Visakhapatnam"},
+  {n:"Pragati Engineering College",d:"Srikakulam"},
+  {n:"QIS College of Engineering & Technology",d:"Ongole"},
+
+  // ── KL / VIJAYAWADA / KRISHNA ──
+  {n:"KL University (Koneru Lakshmaiah Education Foundation)",d:"Guntur"},
+  {n:"Velagapudi Ramakrishna Siddhartha Engineering College",d:"Vijayawada"},
+  {n:"RVR & JC College of Engineering",d:"Guntur"},
+  {n:"Bapatla Engineering College",d:"Guntur"},
+  {n:"Narasaraopeta Engineering College (Autonomous)",d:"Guntur"},
+  {n:"Malla Reddy Engineering College",d:"Vijayawada"},
+  {n:"St. Ann's College of Engineering & Technology",d:"Chirala"},
+  {n:"PBR Visvodaya Institute of Technology & Science",d:"Kavali"},
+  {n:"Vasireddy Venkatadri Institute of Technology (VVIT)",d:"Guntur"},
+  {n:"Kallam Haranadhareddy Institute of Technology",d:"Guntur"},
+  {n:"Vijaya Institute of Technology for Women",d:"Vijayawada"},
+  {n:"Chalapathi Institute of Engineering & Technology",d:"Guntur"},
+  {n:"Lendi Institute of Engineering & Technology",d:"Vizianagaram"},
+  {n:"Sri Chaitanya College of Engineering (Autonomous)",d:"Krishna"},
+  {n:"Krishna Chaitanya Institute of Technology & Sciences",d:"Markapur"},
+
+  // ── KAKINADA / EAST GODAVARI ──
+  {n:"JNTUCEK – Jawaharlal Nehru Tech. University Kakinada",d:"Kakinada"},
+  {n:"Godavari Institute of Engineering & Technology (Autonomous)",d:"Rajahmundry"},
+  {n:"Seshadri Rao Gudlavalleru Engineering College (Autonomous)",d:"Krishna"},
+  {n:"Sree Venkateswara College of Engineering",d:"Nellore"},
+  {n:"Eluru College of Engineering & Technology",d:"West Godavari"},
+  {n:"Rajamahendri Institute of Engineering & Technology",d:"Rajahmundry"},
+  {n:"Sarojini Institute of Technology",d:"Visakhapatnam"},
+  {n:"CMR College of Engineering & Technology",d:"East Godavari"},
+  {n:"Mekala Venkataramaiah Institute of Technology & Science",d:"East Godavari"},
+  {n:"Pydah College of Engineering & Technology",d:"Visakhapatnam"},
+  {n:"Sri Vasavi Engineering College (Autonomous)",d:"West Godavari"},
+  {n:"Dhanekula Institute of Engineering & Technology",d:"Krishna"},
+
+  // ── TIRUPATI / CHITTOOR ──
+  {n:"IIT Tirupati – Indian Institute of Technology",d:"Tirupati"},
+  {n:"Sri Venkateswara University College of Engineering",d:"Tirupati"},
+  {n:"Sri Venkateswara College of Engineering (Autonomous)",d:"Tirupati"},
+  {n:"IIITDM Kurnool – Indian Institute of Information Technology",d:"Kurnool"},
+  {n:"IIIT Sri City – Indian Institute of Information Technology",d:"Chittoor"},
+  {n:"SRM University Amaravathi",d:"Guntur"},
+  {n:"Sri Padmavathi Mahila Visvavidyalayam Engineering College",d:"Tirupati"},
+  {n:"Audisankara College of Engineering & Technology",d:"Nellore"},
+  {n:"Tirumala Engineering College",d:"Nalgonda"},
+  {n:"Sree Dattha Institute of Engineering & Science",d:"Tirupati"},
+  {n:"NBKR Institute of Science & Technology (Autonomous)",d:"Nellore"},
+  {n:"Madanapalle Institute of Technology & Science (Autonomous)",d:"Chittoor"},
+  {n:"G. Pullaiah College of Engineering & Technology",d:"Kurnool"},
+  {n:"Sree Vidyanikethan Engineering College (Autonomous)",d:"Tirupati"},
+  {n:"Sri Sai Ram Institute of Technology",d:"Chittoor"},
+  {n:"Annamacharya Institute of Technology & Sciences",d:"Tirupati"},
+  {n:"P.V.K.K. Institute of Technology",d:"Anantapur"},
+
+  // ── KURNOOL / ANANTAPUR ──
+  {n:"JNTU Anantapur – Jawaharlal Nehru Tech. University",d:"Anantapur"},
+  {n:"Rajeev Gandhi Memorial College of Engineering & Technology",d:"Kurnool"},
+  {n:"RGUKT Ongole – Rajiv Gandhi University of Knowledge Technologies",d:"Ongole"},
+  {n:"RGUKT Nuzvid",d:"Krishna"},
+  {n:"RGUKT Srikakulam",d:"Srikakulam"},
+  {n:"RGUKT Idupulapaya",d:"Kadapa"},
+  {n:"Sree Rama Engineering College",d:"Kurnool"},
+  {n:"Kuppam Engineering College",d:"Chittoor"},
+  {n:"Sri Krishnadevaraya University College of Engineering",d:"Anantapur"},
+  {n:"Srinivasa Ramanujan Institute of Technology",d:"Anantapur"},
+  {n:"Brindavan Institute of Technology & Science",d:"Kurnool"},
+  {n:"Priyadarshini Institute of Technology & Science",d:"Kadapa"},
+  {n:"YSR Engineering College of Yogi Vemana University",d:"Kadapa"},
+
+  // ── NELLORE / PRAKASAM ──
+  {n:"SRKR Engineering College (Autonomous)",d:"Bhimavaram"},
+  {n:"Prakasam Engineering College",d:"Prakasam"},
+  {n:"Narayana Engineering College",d:"Nellore"},
+  {n:"Chirala Engineering College",d:"Prakasam"},
+  {n:"Sri Sunflower College of Engineering & Technology",d:"Nellore"},
+
+  // ── IIPE ──
+  {n:"IIPE – Indian Institute of Petroleum & Energy",d:"Visakhapatnam"},
+
+  // ── NIT ──
+  {n:"NIT Andhra Pradesh – National Institute of Technology",d:"Tadepalligudem"},
+
+  // ── OTHER ──
+  {n:"Other (Not Listed)",d:"Andhra Pradesh"},
+];
+
+// ── SEARCHABLE DROPDOWN LOGIC ──────────────────
+let ddOpen = false;
+
+function renderDD(list) {
+  const dd = document.getElementById('collegeDD');
+  if (!list.length) {
+    dd.innerHTML = '<div class="ss-none">No college found — select "Other" or check spelling</div>';
+  } else {
+    dd.innerHTML = list.map((c,i) =>
+      `<div class="ss-item" onmousedown="pickCollege('${c.n.replace(/'/g,"\\'")}')">
+        ${c.n}<div class="dist">${c.d} District</div>
+      </div>`
+    ).join('');
+  }
+}
+
+function filterColleges(q) {
+  const list = q.trim().length === 0
+    ? AP_COLLEGES
+    : AP_COLLEGES.filter(c => c.n.toLowerCase().includes(q.toLowerCase()) || c.d.toLowerCase().includes(q.toLowerCase()));
+  renderDD(list.slice(0, 50));
+  document.getElementById('collegeName').value = '';
+}
+
+function openDD() {
+  const q = document.getElementById('collegeSearch').value;
+  filterColleges(q);
+  document.getElementById('collegeDD').classList.add('open');
+  ddOpen = true;
+}
+
+function closeDD() {
+  document.getElementById('collegeDD').classList.remove('open');
+  ddOpen = false;
+}
+
+function pickCollege(name) {
+  document.getElementById('collegeSearch').value = name;
+  document.getElementById('collegeName').value = name;
+  document.getElementById('collegeDD').classList.remove('open');
+  document.getElementById('collegeSearch').classList.remove('err');
+  document.getElementById('e-collegeName').classList.remove('show');
+}
+
+// ── DOMAIN TAGS (max 2) ────────────────────────
+let doms = [];
+function selDom(el, d) {
+  const i = doms.indexOf(d);
+  if (i > -1) { doms.splice(i,1); el.classList.remove('on'); }
+  else {
+    if (doms.length >= 2) { document.querySelector('.tag.on')?.classList.remove('on'); doms.shift(); }
+    doms.push(d); el.classList.add('on');
+  }
+  document.getElementById('interestedDomain').value = doms.join(', ');
+  if (doms.length > 0) hideE('interestedDomain');
+}
+
+// ── COURSE TOGGLE ──────────────────────────────
+function togCC(el) {
+  const cb = el.querySelector('input[type=checkbox]');
+  el.classList.toggle('on', cb.checked);
+  if (document.querySelectorAll('.cc.on').length > 0) hideE('courses');
+}
+
+// ── FILE UPLOAD ────────────────────────────────
+function handleFile(inp) {
+  const f = inp.files[0];
+  if (f) {
+    document.getElementById('upZone').classList.add('has-file');
+    const fn = document.getElementById('fname');
+    fn.textContent = '✓ ' + f.name; fn.classList.add('show');
+    hideE('receipt');
+  }
+}
+
+// ── ERROR HELPERS ──────────────────────────────
+function showE(id,msg) {
+  const el=document.getElementById(id), e=document.getElementById('e-'+id);
+  if(el) el.classList.add('err');
+  if(e){ if(msg) e.textContent=msg; e.classList.add('show'); }
+}
+function hideE(id) {
+  const el=document.getElementById(id), e=document.getElementById('e-'+id);
+  if(el) el.classList.remove('err');
+  if(e) e.classList.remove('show');
+}
+
+// ── VALIDATION ─────────────────────────────────
+function validate() {
+  let ok = true;
+  const v = id => (document.getElementById(id)?.value||'').trim();
+
+  if(v('studentName').length<2)                         {showE('studentName');ok=false;}else hideE('studentName');
+  if(!/^\d{10}$/.test(v('mobile')))                     {showE('mobile');ok=false;}else hideE('mobile');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('email')))   {showE('email','Enter a valid email address.');ok=false;}
+  else if(!emailVerified)                               {showE('email','Please verify your email with OTP before submitting.');ok=false;}
+  else                                                  hideE('email');
+  if(!v('city'))                                        {} else hideE('city');
+  if(!v('collegeName'))                                 {showE('collegeName','Please select your college from the list.');ok=false;}else hideE('collegeName');
+  if(!v('collegeId'))                                   {} else hideE('collegeId');
+  if(!document.getElementById('department').value)      {showE('department');ok=false;}else hideE('department');
+  if(!document.getElementById('semester').value)        {} else hideE('semester');
+  if(doms.length===0)                                   {} else hideE('interestedDomain');
+  if(!document.querySelectorAll('.cc.on').length)       {showE('courses','Please select at least one course.');ok=false;}else hideE('courses');
+  if(!v('transactionId'))                               {showE('transactionId');ok=false;}else hideE('transactionId');
+  if(!document.getElementById('amountPaid').value)      {showE('amountPaid');ok=false;}else hideE('amountPaid');
+  if(!document.getElementById('paymentDate').value)     {showE('paymentDate');ok=false;}else hideE('paymentDate');
+  if(!document.getElementById('receiptFile').files[0])  {showE('receipt','Please upload your payment receipt.');ok=false;}else hideE('receipt');
+  return ok;
+}
+
+// ── SUBMIT ─────────────────────────────────────
+async function doSubmit() {
+  if(!validate()) {
+    const first = document.querySelector('.emsg.show');
+    if(first) first.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+
+  const btn = document.querySelector('.sbtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle"></span> Submitting…';
+
+  const courses = [...document.querySelectorAll('.cc.on input')].map(c=>c.value);
+  const formData = new FormData();
+
+  formData.append('student_name',      document.getElementById('studentName').value.trim());
+  formData.append('mobile',            document.getElementById('mobile').value.trim());
+  formData.append('email',             document.getElementById('email').value.trim());
+  formData.append('city',              document.getElementById('city').value.trim());
+  formData.append('college_name',      document.getElementById('collegeName').value.trim());
+  formData.append('college_id',        document.getElementById('collegeId').value.trim());
+  formData.append('department',        document.getElementById('department').value);
+  formData.append('semester',          document.getElementById('semester').value);
+  formData.append('interested_domains',doms.join(', '));
+  formData.append('courses_selected',  courses.join(', '));
+  formData.append('transaction_id',    document.getElementById('transactionId').value.trim());
+  formData.append('amount_paid',       document.getElementById('amountPaid').value);
+  formData.append('payment_date',      document.getElementById('paymentDate').value);
+  formData.append('email_verified',    emailVerified ? 'true' : 'false');
+
+  const receiptFile = document.getElementById('receiptFile').files[0];
+  if(receiptFile) formData.append('receipt', receiptFile);
+
+  try {
+    const res = await fetch('http://localhost:3000/api/register', {
+      method: 'POST',
+      body: formData
+    });
+    const json = await res.json();
+
+    if(json.success) {
+      // Show success, hide form cards
+      document.querySelectorAll('.card').forEach((c,i)=>{ if(i<3) c.style.display='none'; });
+      const payCard = document.querySelectorAll('.card')[3];
+      [...payCard.children].forEach(el=>{ if(el.id!=='successBox') el.style.display='none'; });
+      document.getElementById('refId').textContent = json.ref_id;
+      document.getElementById('successBox').classList.add('show');
+      window.scrollTo({top:0,behavior:'smooth'});
+    } else {
+      alert('⚠ ' + (json.message || 'Submission failed. Please try again.'));
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Submit Application';
+    }
+  } catch(err) {
+    alert('⚠ Could not reach the server. Please check your connection and try again.');
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Submit Application';
+  }
+}
+</script>
+</body>
+</html>
